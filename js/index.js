@@ -19,62 +19,50 @@ document.addEventListener("DOMContentLoaded", () => {
     taskInput.value = "";
     taskInput.style.outlineColor = "";
   });
-});
 
-function addTask(taskText) {
-  const taskList = document.querySelector(".todo_list");
+  function addTask(taskText) {
+    const listItem = document.createElement("div");
+    listItem.className = "task";
 
-  const listItem = document.createElement("div");
-  listItem.className = "task";
+    listItem.innerHTML = `
+      <span>${taskText}</span>
+      <button class="edit">Edit</button>
+      <button class="delete">Delete</button>
+    `;
 
-  listItem.innerHTML = `
-    <span>${taskText}</span>
-    <button class="edit">Edit</button>
-    <button class="delete" onclick="deleteTask(this)">Delete</button>
-  `;
+    const deleteButton = listItem.querySelector(".delete");
+    deleteButton.addEventListener("click", () => deleteTask(listItem));
 
-  const editButton = listItem.querySelector(".edit");
-  editButton.addEventListener("click", () => editTask(listItem));
+    const editButton = listItem.querySelector(".edit");
+    editButton.addEventListener("click", () => editTask(listItem));
 
-  taskList.appendChild(listItem);
-  saveTasks();
-}
-
-function deleteTask(button) {
-  const taskItem = button.parentElement;
-  taskItem.remove();
-  saveTasks();
-}
-
-function editTask(taskItem) {
-  const taskSpan = taskItem.querySelector("span");
-  const newTaskText = prompt("Yangi vazifani kiriting:", taskSpan.textContent);
-
-  if (newTaskText && newTaskText.trim().length >= 3) {
-    taskSpan.textContent = newTaskText.trim();
+    taskList.appendChild(listItem);
     saveTasks();
-  } else {
-    alert("Vazifa matni kamida 3 ta belgi bo'lishi kerak.");
   }
-}
 
-function saveTasks() {
-  const taskList = document.querySelectorAll(".task span");
-  const tasks = [];
+  function deleteTask(taskItem) {
+    taskItem.remove();
+    saveTasks();
+  }
 
-  taskList.forEach((task) => {
-    tasks.push(task.textContent);
-  });
+  function saveTasks() {
+    const taskList = document.querySelectorAll(".task span");
+    const tasks = [];
 
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-}
-
-function loadTasks() {
-  const tasks = JSON.parse(localStorage.getItem("tasks"));
-
-  if (tasks) {
-    tasks.forEach((taskText) => {
-      addTask(taskText);
+    taskList.forEach((task) => {
+      tasks.push(task.textContent);
     });
+
+    localStorage.setItem("tasks", JSON.stringify(tasks));
   }
-}
+
+  function loadTasks() {
+    const tasks = JSON.parse(localStorage.getItem("tasks"));
+
+    if (tasks) {
+      tasks.forEach((taskText) => {
+        addTask(taskText);
+      });
+    }
+  }
+});
