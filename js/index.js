@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     addTask(taskText);
     taskInput.value = "";
-    taskInput.style.outlineColor = ""; 
+    taskInput.style.outlineColor = "";
   });
 });
 
@@ -33,6 +33,9 @@ function addTask(taskText) {
     <button class="delete" onclick="deleteTask(this)">Delete</button>
   `;
 
+  const editButton = listItem.querySelector(".edit");
+  editButton.addEventListener("click", () => editTask(listItem));
+
   taskList.appendChild(listItem);
   saveTasks();
 }
@@ -41,6 +44,18 @@ function deleteTask(button) {
   const taskItem = button.parentElement;
   taskItem.remove();
   saveTasks();
+}
+
+function editTask(taskItem) {
+  const taskSpan = taskItem.querySelector("span");
+  const newTaskText = prompt("Yangi vazifani kiriting:", taskSpan.textContent);
+
+  if (newTaskText && newTaskText.trim().length >= 3) {
+    taskSpan.textContent = newTaskText.trim();
+    saveTasks();
+  } else {
+    alert("Vazifa matni kamida 3 ta belgi bo'lishi kerak.");
+  }
 }
 
 function saveTasks() {
@@ -57,7 +72,9 @@ function saveTasks() {
 function loadTasks() {
   const tasks = JSON.parse(localStorage.getItem("tasks"));
 
-  tasks.forEach((taskText) => {
-    addTask(taskText);
-  });
+  if (tasks) {
+    tasks.forEach((taskText) => {
+      addTask(taskText);
+    });
+  }
 }
